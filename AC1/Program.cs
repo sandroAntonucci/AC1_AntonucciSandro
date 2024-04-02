@@ -6,56 +6,75 @@ namespace AC1
     {
         static void Main()
         {
-            const int Zero = 0, Ten = 10;
+            const int Zero = 0, One = 1, Ten = 10;
 
-            const string MsgScore = "--- Puntuació de la missió {0} ---";
+            const string MsgScore = "\n\n--- Puntuació de la missió {0} ---";
             const string MsgPlayer = "\n - Introdueix el nom del jugador (només caràcters alfabètics): ";
             const string MsgMission = " - Introdueix el nom de la missió (nom de consonant en grec, un guió i un nombre de tres dígits: Delta-003): ";
             const string MsgScoring = " - Introdueix la puntuació de la missió: ";
 
-            int scoring;
+            int scoring = Zero, numScores = Zero;
 
-            string player, mission;
+            bool statOK = false;
+
+            string player = "", mission = "";
 
             List<Score> scores = new List<Score>();
 
-
             // Es creen 10 puntuacions
 
-            for(int i = Zero; i < 3; i++)
+            while(numScores < 3)
             {
 
-                Console.WriteLine(MsgScore, i + 1);
+                Console.WriteLine(MsgScore, numScores + One);
 
-                Console.Write(MsgPlayer);
-                player = Console.ReadLine();
+                // Try-catch per si no s'introdueixen correctament els valors
+                try
+                {
 
-                Console.Write(MsgMission);
-                mission = Console.ReadLine();
+                    // S'introdueixen els valors
+                    Console.Write(MsgPlayer);
+                    player = Console.ReadLine();
 
-                Console.Write(MsgScoring);
-                scoring = Convert.ToInt32(Console.ReadLine());
+                    Console.Write(MsgMission);
+                    mission = Console.ReadLine();
 
-                Score score = new Score(player, mission, scoring);
+                    Console.Write(MsgScoring);
+                    scoring = Convert.ToInt32(Console.ReadLine());
 
-                scores.Add(score);
+                    // Es crea l'objecte score (throw exception per valors invàlids)
+                    Score score = new Score(player, mission, scoring);
 
-                Console.WriteLine("\n\n");
+                    // S'afegeix a la llista de puntuacions i es crea una nova
+                    scores.Add(score);
+                    numScores++;
+
+                }
+                catch (Exception exc)
+                {
+                    // Mostra el missatge d'error
+                    Console.WriteLine(exc.Message);
+
+                }
 
             }
 
 
-            // Es mostren les puntuacions
+            var maxScores = from score in scores
+                            group score by new { score.Player, score.Mission } into scoreGroup
+                            select new
+                            {
+                                Player = scoreGroup.Key.Player,
+                                Mission = scoreGroup.Key.Mission,
+                                MaxScore = scoreGroup.Max(s => s.Scoring)
+                            };
 
-            foreach(Score score in scores)
+            foreach (var maxScore in maxScores)
             {
-                Console.WriteLine("Jugador: {0}", score.Player);
-                Console.WriteLine("Missió: {0}", score.Mission);
-                Console.WriteLine("Puntuació: {0}", score.Scoring);
-                Console.WriteLine("\n\n");
+                Console.WriteLine($"Jugador: {maxScore.Player}, Misión: {maxScore.Mission}, Puntuación más alta: {maxScore.MaxScore}");
             }
 
-
+            Console.ReadLine();
         }
     }
 }

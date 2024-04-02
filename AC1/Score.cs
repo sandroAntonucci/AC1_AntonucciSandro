@@ -54,7 +54,7 @@ namespace AC1
                 Regex rg = new Regex(PatternMission);
 
                 // Es comprova si el valor passat compleix el regex
-                if (rg.IsMatch(mission))
+                if (rg.IsMatch(value))
                 {
                     mission = value;
                 }
