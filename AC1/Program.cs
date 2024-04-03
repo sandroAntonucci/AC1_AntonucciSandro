@@ -12,6 +12,8 @@ namespace AC1
             const string MsgPlayer = "\n - Introdueix el nom del jugador (només caràcters alfabètics): ";
             const string MsgMission = " - Introdueix el nom de la missió (nom de consonant en grec, un guió i un nombre de tres dígits: Delta-003): ";
             const string MsgScoring = " - Introdueix la puntuació de la missió: ";
+            const string MsgRankingHeader = "\n\n--- Rànquing de puntuacions ---";
+            const string MsgRanking = "\n{0} - {1} - {2}";
 
             int scoring = Zero, numScores = Zero;
 
@@ -23,7 +25,7 @@ namespace AC1
 
             // Es creen 10 puntuacions
 
-            while(numScores < 3)
+            while(numScores < Ten)
             {
 
                 Console.WriteLine(MsgScore, numScores + One);
@@ -59,19 +61,14 @@ namespace AC1
 
             }
 
+            // Es genera el ranking
+            List<Score> ranking = Helper.GenerateUniqueRanking(scores);
 
-            var maxScores = from score in scores
-                            group score by new { score.Player, score.Mission } into scoreGroup
-                            select new
-                            {
-                                Player = scoreGroup.Key.Player,
-                                Mission = scoreGroup.Key.Mission,
-                                MaxScore = scoreGroup.Max(s => s.Scoring)
-                            };
-
-            foreach (var maxScore in maxScores)
+            // Es mostra el ranking
+            Console.WriteLine(MsgRankingHeader);
+            foreach (Score score in ranking)
             {
-                Console.WriteLine($"Jugador: {maxScore.Player}, Misión: {maxScore.Mission}, Puntuación más alta: {maxScore.MaxScore}");
+                Console.WriteLine(MsgRanking, score.Player, score.Mission, score.Scoring);
             }
 
             Console.ReadLine();
